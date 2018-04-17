@@ -11,7 +11,7 @@ product_id INTEGER(10) AUTO_INCREMENT NOT NULL,
 product_name VARCHAR (9999) NULL,
 department_name VARCHAR (9999) NULL,
 price DECIMAL (9999,2) NULL,
-stock_quantity DECIMAL (9999,2) NULL,
+stock_quantity (9999) NULL,
 PRIMARY KEY(product_id)
 );
 
@@ -38,5 +38,6 @@ INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("Speakers", "Technology", 20, 89);
 INSERT INTO products (product_name, department_name, price, stock_quantity)
 VALUES ("Headphones", "Technology", 30, 412);
-
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+VALUES ("Babies", "Food", 0, 1412);
 --  --
