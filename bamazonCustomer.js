@@ -49,8 +49,9 @@ var newOrder = function(){
         }
     ]).then(function(answers){
 
-        var itemQuery = connection.query("SELECT FROM * products WHERE product_id=?", answers.item, function(err, res) {
-
+        var itemQuery = connection.query("SELECT * FROM products WHERE product_id=?", answers.item, function(err, res) {
+console.log(res);
+console.log(err);
             if (answers.amount > res[0].stock_quantity) {
                 console.log("We aint got that babay!");
             } else {
