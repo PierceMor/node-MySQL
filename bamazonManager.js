@@ -80,6 +80,7 @@ function showSales(){
         if (err) throw err;
         console.table(res);
     });
+    offerChoices();
 }
 
 // If a manager selects View Low Inventory, then it should list all items with an inventory count lower than five.
@@ -89,6 +90,7 @@ function lowInvetory(){
         if (err) throw err; 
             console.table(res);      
     });
+    offerChoices();
 }
 
 // If a manager selects Add to Inventory, your app should display a prompt that will let the manager "add more" of any item currently in the store.
@@ -136,11 +138,45 @@ function addInvetory(){
 
 // If a manager selects Add New Product, it should allow the manager to add a completely new product to the store.
 function addProduct(){
+    var itemquery = connection.query("SELECT * FROM products", function(err, res){
     console.log("\033c");
     inquirer.prompt([{
-        name: "addId",
+        name: "addProd",
         type: "input",
-        message: "Enter item ID of new product"
-    }])
+        message: "Enter Name of new product"
+    }, {
+        name: "dept",
+        type: "list",
+        message: "Enter Deparment Name",
+        choices: [
+            "Food",
+            "Clothing",
+            "Technology",
+            "Jiu Jitsu"
+        ]
+    }, {
+        name: "price",
+        type: "integer",
+        message: "Enter Price of new Product"
+    }, {
+        name: "stock",
+        type: "integer",
+        message: "Enter stock quantity of new product"
+    }
+]).then(function(input){
+    var query = connection.query("INSERT INTO products SET ?",[
+        {
+            product_name:  input.addProd,
+            department_name:  input.dept,
+            price:  input.price, 
+            stock_quantity: input.stock
+        },
+    ]);
+    console.log("Product added to the Store!");
+    connection.end();
+})
+//end of connection
+})
+// End of function
 }
 
