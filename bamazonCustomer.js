@@ -24,7 +24,7 @@ connection.connect(function(err){
 //display the available sell things 
 function displayItems(){
     console.log(`Here is our Inventory......`);
-    
+
     connection.query("SELECT product_id, product_name, price FROM products",
     function(err,res){
         if (err) throw err;
@@ -49,10 +49,12 @@ var newOrder = function(){
             //Checks if the Item ID exists 
             if ( ! res.length ) {
                 console.log("We aint got that BABAY!");
+                newOrder();
             }
             // Checks if we get 
             else if( answers.amount > res[0].stock_quantity ){
                 console.log("Not enough stock");
+                newOrder();
             } 
             else {
                 var itemQuery = connection.query("UPDATE products SET ? WHERE ?", [
