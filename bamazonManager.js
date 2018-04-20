@@ -93,22 +93,42 @@ function lowInvetory(){
 
 // If a manager selects Add to Inventory, your app should display a prompt that will let the manager "add more" of any item currently in the store.
 function addInvetory(){
+    console.log("\033");
     var query = connection.query('SELECT * FROM products',  function(err, res){
         if (err) throw err;
-        for (i=0; i < res.length; i++)
-        console.table(res);
-        inquirer.prompt({
-            name: "answer",
-            type: "list",
-            message: "What Stock are we updating?",
-            choices: res[i]
-        }).then(function(answer){
-                switch(res.product_name){
-                    case res.product_name[i]:
 
-                    break;
+        console.table(res);
+        inquirer.prompt([
+            {
+                type: "integer",
+                name: "item",
+                message: "What item is being stocked?"
+            },
+            {
+                type: "integer",
+                name: "amount",
+                message: "Add Stock Amount?"
+            }
+        ]).then(function(answers){
+            var itemquery = connection.query("SELECT * FROM products WHERE product_id=?", answers.item, function(err, res){
+                    if ( ! res.length){
+                        console.log(`What you doing boss man?`);
+                        addInvetory();
+                    } else {
+                        var itemQuery = connection.query(" UPDATE products SET ? WHERE ?", [
+                            {
+                                stock_quantity: res[0].stock_quantity + answers.amount
+                            },
+                            {
+                                product_id: answers.item
+                            }
+                        ]);
+                        console.log(`Thank you for updating the Stock!`)
+                    }
+                    connection.end();
                 }
-            });
+            );
+        });
         });
     }
 
@@ -116,9 +136,11 @@ function addInvetory(){
 
 // If a manager selects Add New Product, it should allow the manager to add a completely new product to the store.
 function addProduct(){
-    var query = connection.query("SELECT ",
-    function(err,res){
-        if (err) throw err; 
-    })
+    console.log("\033c");
+    inquirer.prompt([{
+        name: "addId",
+        type: "input",
+        message: "Enter item ID of new product"
+    }])
 }
 
