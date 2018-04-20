@@ -1,7 +1,7 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var request = require("request-promise");
-
+var cTable= require("console.table");
 // this connects us to the beautiful server
 var connection = mysql.createConnection({
     host: "localhost",
@@ -24,17 +24,14 @@ connection.connect(function(err){
 //display the available sell things 
 function displayItems(){
     console.log(`Here is our Inventory......`);
-    console.log(`Item Id- Item- Price`);
-    connection.query("SELECT * FROM products",
-function(err,res){
-    if (err) throw err;
-    for (var i = 0; i < res.length; i++) {
-        console.log(`\n ${res[i].product_id} ${res[i].product_name} $${res[i].price}`);
-    }
-    newOrder();
-});
+    
+    connection.query("SELECT product_id, product_name, price FROM products",
+    function(err,res){
+        if (err) throw err;
+            console.table(res);
+        newOrder();
+    });
 }
-
 var newOrder = function(){
     inquirer.prompt([
         {
@@ -48,13 +45,16 @@ var newOrder = function(){
             message: "How many would you be purchasing today?"
         }
     ]).then(function(answers){
-
         var itemQuery = connection.query("SELECT * FROM products WHERE product_id=?", answers.item, function(err, res) {
-console.log(res);
-console.log(err);
-            if (answers.amount > res[0].stock_quantity) {
-                console.log("We aint got that babay!");
-            } else {
+            //Checks if the Item ID exists 
+            if ( ! res.length ) {
+                console.log("We aint got that BABAY!");
+            }
+            // Checks if we get 
+            else if( answers.amount > res[0].stock_quantity ){
+                console.log("Not enough stock");
+            } 
+            else {
                 var itemQuery = connection.query("UPDATE products SET ? WHERE ?", [
                 {
                     stock_quantity: res[0].stock_quantity - answers.amount
@@ -63,11 +63,11 @@ console.log(err);
                     product_id: answers.item
                 }
             ]);
-            } connection.end();
-        });
-        
+            console.log(`Thank you for your purchase, BABAY! Your Order number is ${connection.threadId}`);
+            }
+            connection.end();
+        }); 
     });
-
-    };
+};
 
    
